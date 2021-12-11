@@ -1,0 +1,13 @@
+{
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": {
+        "configFile": "config.json"
+    },
+    "recursive": true,
+    "require": [
+        "@babel/register",
+        "ts-node/register"
+    ],
+    "watch-files": ["**/*.js", "**/*.ts"],
+    "extension": ["js", "ts"]
+}
