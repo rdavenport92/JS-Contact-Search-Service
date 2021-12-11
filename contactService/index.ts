@@ -5,11 +5,10 @@
 // Feel free to add files as necessary
 
 export default class {
-    constructor(updates, service) {
-
-    }
-
+    constructor(updates, service) {}
+  
     search(query) {
-        return [];
+      return []
     }
-}
+  }
+  
