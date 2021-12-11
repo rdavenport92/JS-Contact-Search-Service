@@ -56,7 +56,7 @@ describe('Contact Service', () => {
 
     describe('search', () => {
         describe('add event', () => {
-            it('should return only contacts that match the search query', async () => {
+            xit('should return only contacts that match the search query', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000'});
                 //This contact should not be returned by the search
                 createContact({ firstName: 'John', lastName: 'Doe', primaryPhoneNumber: '303-123-4567'});
@@ -68,7 +68,7 @@ describe('Contact Service', () => {
                 expect(results[0].id).to.equal(contact.id);
             });
 
-            it('should not return a contact before retrieving all the details from the service', async () => {
+            xit('should not return a contact before retrieving all the details from the service', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000' });
                 
                 const before = service.search('First');
@@ -80,7 +80,7 @@ describe('Contact Service', () => {
                 expect(after[0].id).to.equal(contact.id);
             });
 
-            it('should map the returned contacts to the expected data format', async () => {
+            xit('should map the returned contacts to the expected data format', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000', primaryEmail: 'first.last@mail.com' });
                 
                 await flush();
@@ -96,7 +96,7 @@ describe('Contact Service', () => {
                 });
             });
             
-            it('should return multiple matching contacts', async () => {
+            xit('should return multiple matching contacts', async () => {
                 const contact1 = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000' });
                 const contact2 = createContact({ firstName: 'First', lastName: 'Other', primaryPhoneNumber: '314-555-0001' });
                 //This contact should not be returned by the search
@@ -110,7 +110,7 @@ describe('Contact Service', () => {
                 expect(results.map(res => res.id)).includes(contact2.id);
             });
             
-            it('should map phone numbers with different incoming formats', async () => {
+            xit('should map phone numbers with different incoming formats', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0001', secondaryPhoneNumber: '+13145551234' });
                 
                 await flush();
@@ -126,7 +126,7 @@ describe('Contact Service', () => {
                 });
             });
 
-            it('should map the contact name to nickName lastName if applicable', async () => {
+            xit('should map the contact name to nickName lastName if applicable', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', nickName: 'Joe', primaryPhoneNumber: '314-555-0000', primaryEmail: 'joe.last@mail.com' });
                 
                 await flush();
@@ -144,7 +144,7 @@ describe('Contact Service', () => {
         });
 
         describe('change event', () => {
-            it('should return the updated change to a name', async () => {
+            xit('should return the updated change to a name', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000' });
                 
                 await flush();
@@ -159,7 +159,7 @@ describe('Contact Service', () => {
         });
 
         describe('remove event', () => {
-            it('should not return removed contacts', async () => {
+            xit('should not return removed contacts', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000' });
                 
                 await flush();
@@ -170,7 +170,7 @@ describe('Contact Service', () => {
         });
 
         describe('searchable fields', () => {
-            it('should be searchable by phone number', async () => {
+            xit('should be searchable by phone number', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000' });
                 
                 await flush();
@@ -181,7 +181,7 @@ describe('Contact Service', () => {
                 expect(service.search('314655').length).to.equal(0);
             });
 
-            it('should be searchable by any name variation', async () => {
+            xit('should be searchable by any name variation', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', nickName: 'Joey', primaryPhoneNumber: '314-555-0000' });
                 
                 await flush();
