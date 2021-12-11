@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "pretest": "npm install --no-save",
-    "test": "./node_modules/.bin/mocha test --require @babel/register",
-    "test:watch": "./node_modules/.bin/mocha test --require @babel/register --watch"
+    "test": "tsc && ./node_modules/.bin/mocha test --require @babel/register --colors",
+    "test:watch": "concurrently \"tsc -w\" \"./node_modules/.bin/mocha test --require @babel/register --colors --watch\""
   },
   "dependencies": {
     "@babel/core": "7.14.3",
