@@ -1,4 +1,8 @@
 # Source : https://github.com/github/gitignore
+
+contactService/**/*.js
+contactService/**/*.map
+
 # Maven, Node, Python, Rails
 
 # Maven
