@@ -1,4 +1,5 @@
-# Contact Search Service
+# Contact Search Service  [![Actions Status](https://github.com/rdavenport92/JS-Contact-Search-Service/workflows/Contact%20Search%20Service/badge.svg?branch=master)](https://github.com/rdavenport92/JS-Contact-Search-Service/actions)
+
 
 A customer has asked you to implement an interface to let them search through contacts in their system. The
 problem is, their system is slow...super slow. And they want the search to be fast...super fast. Because of this,
