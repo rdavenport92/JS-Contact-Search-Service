@@ -87,6 +87,24 @@ export interface IContactSearchService {
 }
 
 
-export interface IContactCache {
+// Cache types
+
+export interface ICache<T> {
+    get(id: string): T
+
+    getAll(): T[]
+
+    add(id: string, newItem: T): T
+
+    remove(id: string): T
+
+    update(
+        id: string,
+        field: string,
+        value: string
+    ): T
+}
+
+export interface IContactCacheContent {
     [key: ContactID]: IContactDB;
 }
