@@ -13,7 +13,7 @@ export type ChangeContactEventHandler = (id: string, field: string, value: strin
 export type EventUnsubscriber = () => void;
 
 
-export interface IContactUpdateService {
+export interface IContactUpdateEmitter {
     listeners: {
         [ContactUpdateEventType.ADD]: AddContactEventHandler[],
         [ContactUpdateEventType.REMOVE]: RemoveContactEventHandler[],
