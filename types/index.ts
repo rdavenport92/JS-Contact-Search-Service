@@ -48,7 +48,7 @@ export interface IContactUpdateService {
 
 // Contact access types
 
-type ContactID = string;
+export type ContactID = string;
 
 export interface IContactDB {
     id: ContactID
