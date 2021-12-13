@@ -12,18 +12,10 @@ import {
     IContactSearchService,
     IContactUpdateEmitter,
     ICache,
+    ContactID,
 } from '../types';
 import ContactCache from './cache';
 import { findContactsByQuery } from './utils';
-
-const contactCreatedHandler = async (
-    id: string,
-    service: IContactAccessService,
-    cache: ICache<IContactDB>
-) => {
-    const contact = await service.getById(id);
-    cache.add(id, contact);
-};
 
 export default class implements IContactSearchService {
     private _contactCache: ICache<IContactDB>;
@@ -43,9 +35,21 @@ export default class implements IContactSearchService {
         updates: IContactUpdateEmitter,
         service: IContactAccessService
     ) {
-        updates.on(ContactUpdateEventType.ADD, (id: string) =>
-            contactCreatedHandler(id, service, this._contactCache)
+        updates.on(ContactUpdateEventType.ADD, async (id: ContactID) => {
+            const contact = await service.getById(id);
+            this._contactCache.add(id, contact);
+        });
+
+        updates.on(
+            ContactUpdateEventType.CHANGE,
+            (id: ContactID, field: string, value: string) => {
+                this._contactCache.update(id, field, value);
+            }
         );
+
+        updates.on(ContactUpdateEventType.REMOVE, (id: ContactID) => {
+            this._contactCache.remove(id);
+        });
     }
 
     search(query: string): IContact[] {
