@@ -1,7 +1,5 @@
 // Contact update event types
 
-import { Observable } from 'rxjs';
-
 export type EventUnsubscriber = () => void;
 
 export enum ContactUpdateEventType {
