@@ -1,23 +1,47 @@
 // Contact update event types
 
-export enum ContactUpdateEventType {
-    ADD = 'add',
-    REMOVE = 'remove',
-    CHANGE = 'change'
-}
-
-export type AddContactEventHandler = (id: string) => unknown;
-export type RemoveContactEventHandler = (id: string) => unknown;
-export type ChangeContactEventHandler = (id: string, field: string, value: string) => unknown;
+import { Observable } from 'rxjs';
 
 export type EventUnsubscriber = () => void;
 
+export enum ContactUpdateEventType {
+    ADD = 'add',
+    REMOVE = 'remove',
+    CHANGE = 'change',
+}
+
+export type AddContactEventHandler = (id: string) => void;
+export type RemoveContactEventHandler = (id: string) => unknown;
+export type ChangeContactEventHandler = (
+    id: string,
+    field: string,
+    value: string
+) => unknown;
+
+type AddContactEvent = (
+    event: ContactUpdateEventType.ADD,
+    listener: AddContactEventHandler
+) => EventUnsubscriber;
+
+type RemoveContactEvent = (
+    event: ContactUpdateEventType.REMOVE,
+    listener: RemoveContactEventHandler
+) => EventUnsubscriber;
+
+type ChangeContactEvent = (
+    event: ContactUpdateEventType.CHANGE,
+    listener: ChangeContactEventHandler
+) => EventUnsubscriber;
+
+export type ContactEvent = AddContactEvent &
+    RemoveContactEvent &
+    ChangeContactEvent;
 
 export interface IContactUpdateEmitter {
     listeners: {
-        [ContactUpdateEventType.ADD]: AddContactEventHandler[],
-        [ContactUpdateEventType.REMOVE]: RemoveContactEventHandler[],
-        [ContactUpdateEventType.CHANGE]: ChangeContactEventHandler[]
+        [ContactUpdateEventType.ADD]: AddContactEventHandler[];
+        [ContactUpdateEventType.REMOVE]: RemoveContactEventHandler[];
+        [ContactUpdateEventType.CHANGE]: ChangeContactEventHandler[];
     };
 
     emit(
@@ -31,27 +55,15 @@ export interface IContactUpdateEmitter {
         value: string
     ): void;
 
-    on(
-        event: ContactUpdateEventType.ADD,
-        listener: AddContactEventHandler
-    ): EventUnsubscriber;
-    on(
-        event: ContactUpdateEventType.REMOVE,
-        listener: RemoveContactEventHandler
-    ): EventUnsubscriber;
-    on(
-        event: ContactUpdateEventType.CHANGE,
-        listener: ChangeContactEventHandler
-    ): EventUnsubscriber;
+    on: ContactEvent;
 }
-
 
 // Contact access types
 
 export type ContactID = string;
 
 export interface IContactDB {
-    id: ContactID
+    id: ContactID;
     firstName: string;
     lastName: string;
     nickName: string;
@@ -79,30 +91,24 @@ export interface IContactAccessService {
     getById(id: ContactID): Promise<IContactDB | null>;
 }
 
-
 // Contact search types
 
-export interface IContactSearchService {    
+export interface IContactSearchService {
     search: (query: string) => IContact[];
 }
-
 
 // Cache types
 
 export interface ICache<T> {
-    get(id: string): T
+    get(id: string): T | null;
 
-    getAll(): T[]
+    getAll(): T[];
 
-    add(id: string, newItem: T): T
+    add(id: string, newItem: T): T;
 
-    remove(id: string): T
+    remove(id: string): T;
 
-    update(
-        id: string,
-        field: string,
-        value: string
-    ): T
+    update(id: string, field: string, value: string): T;
 }
 
 export interface IContactCacheContent {
