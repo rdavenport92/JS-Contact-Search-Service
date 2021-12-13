@@ -170,8 +170,26 @@ describe('Contact Service', () => {
         });
 
         describe('searchable fields', () => {
-            xit('should be searchable by phone number', async () => {
+            it('should be searchable by phone number', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000' });
+                
+                await flush();
+
+                expect(service.search('314555').length).to.equal(1); // ignores special characters inserted on contact creation
+                expect(service.search('(314) 555').length).to.equal(1); // ignores special characters when searching
+                expect(service.search('555').length).to.equal(1); // doesn't need to be start of phone number
+                expect(service.search('314655').length).to.equal(0);
+            });
+
+            it('should be searchable by secondary phone number', async () => {
+                const contact = createContact(
+                    { 
+                        firstName: 'First',
+                        lastName: 'Last',
+                        primaryPhoneNumber: '(985) 555-1234',
+                        secondaryPhoneNumber: '314-555-0000'
+                    }
+                );
                 
                 await flush();
 

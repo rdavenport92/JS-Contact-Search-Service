@@ -22,9 +22,7 @@ export default class ContactCache implements ICache<IContactDB> {
     }
 
     getAll() {
-        return Object.keys(this._content).map(
-            (itemKey) => this._content[itemKey]
-        );
+        return Object.keys(this._content).map((id) => this._content[id]);
     }
 
     add(id: ContactID, contact: IContactDB) {
