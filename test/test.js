@@ -56,7 +56,7 @@ describe('Contact Service', () => {
 
     describe('search', () => {
         describe('add event', () => {
-            xit('should return only contacts that match the search query', async () => {
+            it('should return only contacts that match the search query', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000'});
                 //This contact should not be returned by the search
                 createContact({ firstName: 'John', lastName: 'Doe', primaryPhoneNumber: '303-123-4567'});
@@ -68,7 +68,7 @@ describe('Contact Service', () => {
                 expect(results[0].id).to.equal(contact.id);
             });
 
-            xit('should not return a contact before retrieving all the details from the service', async () => {
+            it('should not return a contact before retrieving all the details from the service', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000' });
                 
                 const before = service.search('First');
