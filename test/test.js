@@ -144,7 +144,7 @@ describe('Contact Service', () => {
         });
 
         describe('change event', () => {
-            xit('should return the updated change to a name', async () => {
+            it('should return the updated change to a name', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000' });
                 
                 await flush();

@@ -38,7 +38,13 @@ export default class ContactCache implements ICache<IContactDB> {
     }
 
     update(id: ContactID, field: string, value: string) {
-        // TODO: implement
-        return {} as IContactDB;
+        if (!!this._content[id]) {
+            const updatedContact = {
+                ...this._content[id],
+                [field]: value,
+            };
+            this._content[id] = updatedContact;
+            return this._content[id];
+        }
     }
 }

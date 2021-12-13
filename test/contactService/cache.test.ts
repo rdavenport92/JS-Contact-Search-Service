@@ -66,6 +66,37 @@ describe('Contact Cache', () => {
             expect(result).to.deep.equal(testContact);
         });
     });
+    describe('update', () => {
+        it('should update a contact with new field by specified id', () => {
+            const testContacts = generateContacts();
+            const testContact = testContacts[0];
+            const testId = testContact.id;
+            const testCache = new ContactCache(testContacts);
+            const expectedLastName = chance.word();
+
+            testCache.update(testId, 'lastName', expectedLastName);
+
+            expect(testCache.get(testId).lastName).to.equal(expectedLastName);
+        });
+        it('should return the contact back to the caller', () => {
+            const testContacts = generateContacts();
+            const testContact = testContacts[0];
+            const testId = testContact.id;
+            const testCache = new ContactCache(testContacts);
+            const expectedLastName = chance.word();
+
+            const result = testCache.update(
+                testId,
+                'lastName',
+                expectedLastName
+            );
+
+            expect(result).to.deep.equal({
+                ...testContact,
+                lastName: expectedLastName,
+            });
+        });
+    });
     it('initializes with no contacts in cache if no initial value specified', () => {
         const testCache = new ContactCache();
 
