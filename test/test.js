@@ -96,7 +96,7 @@ describe('Contact Service', () => {
                 });
             });
             
-            xit('should return multiple matching contacts', async () => {
+            it('should return multiple matching contacts', async () => {
                 const contact1 = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000' });
                 const contact2 = createContact({ firstName: 'First', lastName: 'Other', primaryPhoneNumber: '314-555-0001' });
                 //This contact should not be returned by the search
@@ -110,7 +110,7 @@ describe('Contact Service', () => {
                 expect(results.map(res => res.id)).includes(contact2.id);
             });
             
-            xit('should map phone numbers with different incoming formats', async () => {
+            it('should map phone numbers with different incoming formats', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0001', secondaryPhoneNumber: '+13145551234' });
                 
                 await flush();
@@ -126,7 +126,7 @@ describe('Contact Service', () => {
                 });
             });
 
-            xit('should map the contact name to nickName lastName if applicable', async () => {
+            it('should map the contact name to nickName lastName if applicable', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', nickName: 'Joe', primaryPhoneNumber: '314-555-0000', primaryEmail: 'joe.last@mail.com' });
                 
                 await flush();

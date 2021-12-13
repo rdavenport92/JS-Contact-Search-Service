@@ -18,16 +18,41 @@ export const findContactsByQuery = (
 
 export class ContactFactory {
     static create(contact: IContactDB): IContact {
-        const { primaryPhoneNumber, secondaryPhoneNumber } = contact;
+        const {
+            id,
+            primaryPhoneNumber,
+            secondaryPhoneNumber,
+            firstName,
+            nickName,
+            lastName,
+            primaryEmail,
+            addressLine1,
+        } = contact;
 
         const formatPhoneNumbers = (phoneNumbers: string[]) => {
             return phoneNumbers.reduce<string[]>(
                 (phoneNumbers, currentPhoneNumber) => {
                     if (currentPhoneNumber) {
-                        const [area, prefix, line] =
-                            currentPhoneNumber.split('-');
+                        const digits = currentPhoneNumber
+                            .match(/\d+/g)
+                            .join('');
+
+                        const usableDigits =
+                            digits.length == 10
+                                ? digits
+                                : digits.length == 11
+                                ? digits.substring(1)
+                                : null;
+
+                        const [area, prefix, line] = [
+                            usableDigits.slice(0, 3),
+                            usableDigits.slice(3, 6),
+                            usableDigits.slice(6, 10),
+                        ];
+
                         return [...phoneNumbers, `(${area}) ${prefix}-${line}`];
                     }
+
                     return phoneNumbers;
                 },
                 []
@@ -35,14 +60,14 @@ export class ContactFactory {
         };
 
         return {
-            id: contact.id,
-            name: `${contact.firstName} ${contact.lastName}`,
-            email: `${contact.primaryEmail}`,
+            id,
+            name: `${nickName || firstName} ${lastName}`,
+            email: `${primaryEmail}`,
             phones: formatPhoneNumbers([
                 primaryPhoneNumber,
                 secondaryPhoneNumber,
             ]),
-            address: contact.addressLine1,
+            address: addressLine1,
         };
     }
 }
