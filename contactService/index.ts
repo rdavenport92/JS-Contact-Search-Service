@@ -13,9 +13,34 @@ import {
     IContactUpdateEmitter,
     ICache,
     ContactID,
+    EventUnsubscriber,
 } from '../types';
 import ContactCache from './cache';
 import { findContactsByQuery } from './utils';
+
+const registerContactUpdateEventListeners = (
+    updates: IContactUpdateEmitter,
+    service: IContactAccessService,
+    cache: ICache<IContactDB>
+): EventUnsubscriber[] => {
+    return [
+        updates.on(ContactUpdateEventType.ADD, async (id: ContactID) => {
+            const contact = await service.getById(id);
+            cache.add(id, contact);
+        }),
+
+        updates.on(
+            ContactUpdateEventType.CHANGE,
+            (id: ContactID, field: string, value: string) => {
+                cache.update(id, field, value);
+            }
+        ),
+
+        updates.on(ContactUpdateEventType.REMOVE, (id: ContactID) => {
+            cache.remove(id);
+        }),
+    ];
+};
 
 export default class implements IContactSearchService {
     private _contactCache: ICache<IContactDB>;
@@ -27,29 +52,11 @@ export default class implements IContactSearchService {
     ) {
         this._contactCache = cache;
 
-        // TODO: setup initial cache
-        this._registerAccessLayerListeners(updates, service);
-    }
-
-    private _registerAccessLayerListeners(
-        updates: IContactUpdateEmitter,
-        service: IContactAccessService
-    ) {
-        updates.on(ContactUpdateEventType.ADD, async (id: ContactID) => {
-            const contact = await service.getById(id);
-            this._contactCache.add(id, contact);
-        });
-
-        updates.on(
-            ContactUpdateEventType.CHANGE,
-            (id: ContactID, field: string, value: string) => {
-                this._contactCache.update(id, field, value);
-            }
+        const contactEventUnsubscribers = registerContactUpdateEventListeners(
+            updates,
+            service,
+            this._contactCache
         );
-
-        updates.on(ContactUpdateEventType.REMOVE, (id: ContactID) => {
-            this._contactCache.remove(id);
-        });
     }
 
     search(query: string): IContact[] {
