@@ -159,7 +159,7 @@ describe('Contact Service', () => {
         });
 
         describe('remove event', () => {
-            xit('should not return removed contacts', async () => {
+            it('should not return removed contacts', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000' });
                 
                 await flush();

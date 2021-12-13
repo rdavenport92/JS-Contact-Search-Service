@@ -97,6 +97,29 @@ describe('Contact Cache', () => {
             });
         });
     });
+    describe('remove', () => {
+        it('should remove a contact by specified id', () => {
+            const testContacts = generateContacts();
+            const { id: testId } = testContacts[0];
+            const testCache = new ContactCache(testContacts);
+
+            testCache.remove(testId);
+
+            expect(testCache.get(testId)).to.be.null;
+        });
+        it('should return the contact back to the caller', () => {
+            const testContacts = generateContacts();
+            const testContact = testContacts[0];
+            const testId = testContact.id;
+            const testCache = new ContactCache(testContacts);
+
+            const result = testCache.remove(
+                testId
+            );
+
+            expect(result).to.deep.equal(testContact);
+        });
+    });
     it('initializes with no contacts in cache if no initial value specified', () => {
         const testCache = new ContactCache();
 

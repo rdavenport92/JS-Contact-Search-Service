@@ -33,8 +33,13 @@ export default class ContactCache implements ICache<IContactDB> {
     }
 
     remove(id: ContactID) {
-        // TODO: implement
-        return {} as IContactDB;
+        if (!!this._content[id]) {
+            const contactToDelete = { ...this._content[id] };
+
+            delete this._content[id];
+
+            return contactToDelete;
+        }
     }
 
     update(id: ContactID, field: string, value: string) {
