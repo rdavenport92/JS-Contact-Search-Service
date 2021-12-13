@@ -199,7 +199,7 @@ describe('Contact Service', () => {
                 expect(service.search('314655').length).to.equal(0);
             });
 
-            xit('should be searchable by any name variation', async () => {
+            it('should be searchable by any name variation', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', nickName: 'Joey', primaryPhoneNumber: '314-555-0000' });
                 
                 await flush();

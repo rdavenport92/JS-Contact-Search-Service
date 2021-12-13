@@ -1,28 +1,48 @@
 import { IContact, IContactDB } from '../types';
 
+const defaultMatcher = (
+    query: string,
+    contact: IContactDB,
+    contactField: string
+) => contact[contactField].includes(query);
+
+const phoneNumberMatcher = (
+    query: string,
+    contact: IContactDB,
+    contactField: string
+) => {
+    const cleanQuery = query.match(/\d+/g)?.join('');
+    const cleanPhoneNumber = contact[contactField].match(/\d+/g)?.join('');
+    return cleanPhoneNumber.includes(cleanQuery);
+};
+
+const fullNameMatcher = (
+    query: string,
+    contact: IContactDB,
+    contactField: string
+) => {
+    const { lastName } = contact;
+    const firstNamePart = contact[contactField];
+    return `${firstNamePart} ${lastName}`.includes(query);
+};
+
 const queryMatcher = {
-    default(query: string, value: string) {
-        return value.includes(query);
-    },
-    primaryPhoneNumber(query: string, value: string) {
-        const cleanQuery = query.match(/\d+/g)?.join('');
-        const cleanPhoneNumber = value.match(/\d+/g)?.join('');
-        return cleanPhoneNumber.includes(cleanQuery);
-    },
-    secondaryPhoneNumber(query: string, value: string) {
-        const cleanQuery = query.match(/\d+/g)?.join('');
-        const cleanPhoneNumber = value.match(/\d+/g)?.join('');
-        return cleanPhoneNumber.includes(cleanQuery);
-    },
+    default: defaultMatcher,
+    primaryPhoneNumber: phoneNumberMatcher,
+    secondaryPhoneNumber: phoneNumberMatcher,
+    firstName: fullNameMatcher,
+    nickName: fullNameMatcher,
 };
 
 const doesQueryMatchContactField = (query: string, contact: IContactDB) =>
     !!Object.keys(contact).find((contactField) => {
         if (contact[contactField]) {
-            if (queryMatcher[contactField]) {
-                return queryMatcher[contactField](query, contact[contactField]);
+            const matcher = queryMatcher[contactField];
+            if (matcher) {
+                const isMatch = matcher(query, contact, contactField);
+                if (isMatch) return true;
             }
-            return queryMatcher.default(query, contact[contactField]);
+            return queryMatcher.default(query, contact, contactField);
         }
     });
 
@@ -38,18 +58,16 @@ export const findContactsByQuery = (
     }, []);
 
 export class ContactFactory {
-    static create(contact: IContactDB): IContact {
-        const {
-            id,
-            primaryPhoneNumber,
-            secondaryPhoneNumber,
-            firstName,
-            nickName,
-            lastName,
-            primaryEmail,
-            addressLine1,
-        } = contact;
-
+    static create({
+        id,
+        primaryPhoneNumber,
+        secondaryPhoneNumber,
+        firstName,
+        nickName,
+        lastName,
+        primaryEmail,
+        addressLine1,
+    }: IContactDB): IContact {
         const formatPhoneNumber = (potentialPhoneNumber: string) => {
             const digits = potentialPhoneNumber.match(/\d+/g).join('');
 
