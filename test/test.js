@@ -80,7 +80,7 @@ describe('Contact Service', () => {
                 expect(after[0].id).to.equal(contact.id);
             });
 
-            xit('should map the returned contacts to the expected data format', async () => {
+            it('should map the returned contacts to the expected data format', async () => {
                 const contact = createContact({ firstName: 'First', lastName: 'Last', primaryPhoneNumber: '314-555-0000', primaryEmail: 'first.last@mail.com' });
                 
                 await flush();
