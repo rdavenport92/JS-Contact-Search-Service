@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { Chance } from 'chance';
-import ContactService from '../../contactService';
+import ContactService, { RegisterEventHandlerT } from '../../contactService';
 import {
     EventUnsubscriber,
     ICacheService,
@@ -22,15 +22,11 @@ describe('Contact Service', () => {
                     testResults.unsubscriptionCount += 1;
                 });
 
-            const mockEventRegister: (
-                updates: IContactUpdateEmitter,
-                service: IContactAccessService,
-                cache: ICacheService<IContactDB>
-            ) => EventUnsubscriber[] = () =>
-                testUnsubscribers as unknown as EventUnsubscriber[];
+            const mockEventRegister: RegisterEventHandlerT = () =>
+                testUnsubscribers as EventUnsubscriber[];
 
             const contactService = new ContactService(
-                {} as IContactUpdateEmitter,
+                { on: () => null } as unknown as IContactUpdateEmitter,
                 {} as IContactAccessService,
                 {} as ICacheService<IContactDB>,
                 mockEventRegister
