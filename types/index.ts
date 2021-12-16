@@ -1,60 +1,58 @@
 // Contact update event types
 
-export type EventUnsubscriber = () => void;
-
 export enum ContactUpdateEventType {
     ADD = 'add',
     REMOVE = 'remove',
     CHANGE = 'change',
 }
 
-export type AddContactEventHandler = (id: string) => void;
-export type RemoveContactEventHandler = (id: string) => unknown;
-export type ChangeContactEventHandler = (
+type AddContactEventListener = (id: string) => void;
+type RemoveContactEventListener = (id: string) => void;
+type ChangeContactEventListener = (
     id: string,
     field: string,
     value: string
-) => unknown;
+) => void;
 
-type AddContactEvent = (
+export type AddContactEventHandler = (
     event: ContactUpdateEventType.ADD,
-    listener: AddContactEventHandler
+    listener: AddContactEventListener
 ) => EventUnsubscriber;
 
-type RemoveContactEvent = (
+export type RemoveContactEventHandler = (
     event: ContactUpdateEventType.REMOVE,
-    listener: RemoveContactEventHandler
+    listener: RemoveContactEventListener
 ) => EventUnsubscriber;
 
-type ChangeContactEvent = (
+export type ChangeContactEventHandler = (
     event: ContactUpdateEventType.CHANGE,
-    listener: ChangeContactEventHandler
+    listener: ChangeContactEventListener
 ) => EventUnsubscriber;
 
-export type ContactEvent = AddContactEvent &
-    RemoveContactEvent &
-    ChangeContactEvent;
+export type ContactEventHandler = AddContactEventHandler &
+    RemoveContactEventHandler &
+    ChangeContactEventHandler;
 
 export interface IContactUpdateEmitter {
     listeners: {
-        [ContactUpdateEventType.ADD]: AddContactEventHandler[];
-        [ContactUpdateEventType.REMOVE]: RemoveContactEventHandler[];
-        [ContactUpdateEventType.CHANGE]: ChangeContactEventHandler[];
+        [ContactUpdateEventType.ADD]: AddContactEventListener[];
+        [ContactUpdateEventType.REMOVE]: RemoveContactEventListener[];
+        [ContactUpdateEventType.CHANGE]: ChangeContactEventListener[];
     };
 
-    emit(
-        event: ContactUpdateEventType.ADD | ContactUpdateEventType.REMOVE,
-        id: string
-    ): void;
+    emit(event: ContactUpdateEventType.ADD, id: ContactID): void;
+    emit(event: ContactUpdateEventType.REMOVE, id: ContactID): void;
     emit(
         event: ContactUpdateEventType.CHANGE,
-        id: string,
+        id: ContactID,
         field: string,
         value: string
     ): void;
 
-    on: ContactEvent;
+    on: ContactEventHandler;
 }
+
+export type EventUnsubscriber = () => void;
 
 // Contact types
 

@@ -5,54 +5,35 @@
 // Feel free to add files as necessary
 
 import {
-    ContactUpdateEventType,
     IContactAccessService,
     IContact,
     IContactDB,
     IContactSearchService,
     IContactUpdateEmitter,
     ICacheService,
-    ContactID,
     EventUnsubscriber,
 } from '../types';
 import ContactCacheService from '../cacheService';
 import { findContactsByQuery } from './utils';
-
-const registerContactUpdateEventListeners = (
-    updates: IContactUpdateEmitter,
-    service: IContactAccessService,
-    cache: ICacheService<IContactDB>
-): EventUnsubscriber[] => {
-    return [
-        updates.on(ContactUpdateEventType.ADD, async (id: ContactID) => {
-            const contact = await service.getById(id);
-            cache.add(id, contact);
-        }),
-
-        updates.on(
-            ContactUpdateEventType.CHANGE,
-            (id: ContactID, field: string, value: string) => {
-                cache.update(id, field, value);
-            }
-        ),
-
-        updates.on(ContactUpdateEventType.REMOVE, (id: ContactID) => {
-            cache.remove(id);
-        }),
-    ];
-};
+import getEventHandlers from './eventHandlers';
 
 export default class implements IContactSearchService {
     private _contactCache: ICacheService<IContactDB>;
+    private _eventUnsubscribers: EventUnsubscriber[];
 
     constructor(
         updates: IContactUpdateEmitter,
         service: IContactAccessService,
-        cache: ICacheService<IContactDB> = new ContactCacheService()
+        cache: ICacheService<IContactDB> = new ContactCacheService(),
+        registerEventHandlers: (
+            updates: IContactUpdateEmitter,
+            service: IContactAccessService,
+            cache: ICacheService<IContactDB>
+        ) => EventUnsubscriber[] = getEventHandlers
     ) {
         this._contactCache = cache;
 
-        const contactEventUnsubscribers = registerContactUpdateEventListeners(
+        this._eventUnsubscribers = registerEventHandlers(
             updates,
             service,
             this._contactCache

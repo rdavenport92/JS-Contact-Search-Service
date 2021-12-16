@@ -29,7 +29,7 @@ export default class ContactCacheService implements ICacheService<IContactDB> {
 
     remove = (id: ContactID) => this._cache.del(id);
 
-    update(id: ContactID, field: string, value: string) {
+    update = (id: ContactID, field: string, value: string) => {
         const contactToUpdate = this._cache.get<IContactDB>(id);
 
         if (!!contactToUpdate) {
@@ -42,5 +42,5 @@ export default class ContactCacheService implements ICacheService<IContactDB> {
 
             return updatedContact;
         }
-    }
+    };
 }
