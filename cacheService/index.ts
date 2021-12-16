@@ -25,7 +25,7 @@ export default class ContactCacheService implements ICacheService<IContactRaw> {
         this._cache.keys().map((key) => this._cache.get<IContactRaw>(key));
 
     add = (id: ContactID, contact: IContactRaw) =>
-        this._cache.set(id, contact) && contact;
+        this._cache.set(id, contact) ? contact : null;
 
     remove = (id: ContactID) => this._cache.del(id);
 
