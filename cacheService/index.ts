@@ -1,8 +1,8 @@
 import NodeCache from 'node-cache';
 
-import { ContactID, ICache, IContactDB } from '../types';
+import { ContactID, ICacheService, IContactDB } from '../types';
 
-export default class ContactCache implements ICache<IContactDB> {
+export default class ContactCacheService implements ICacheService<IContactDB> {
     private _cache: NodeCache;
 
     constructor(

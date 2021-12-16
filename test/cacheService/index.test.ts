@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import Chance from 'chance';
 import Contact from '../../accessLayer/model';
 
-import ContactCache from '../../contactService/cache';
+import ContactCacheService from '../../cacheService';
 import { IContactDB } from '../../types';
 import uuid from '../../utilities/uuid';
 
@@ -20,7 +20,7 @@ describe('Contact Cache', () => {
     describe('getAll', () => {
         it('should return all contacts in cache', () => {
             const initialContacts = generateContacts(5, 15);
-            const testCache = new ContactCache(initialContacts);
+            const testCache = new ContactCacheService(initialContacts);
 
             const result = testCache.getAll();
 
@@ -31,7 +31,7 @@ describe('Contact Cache', () => {
         it('should retrieve a contact by id', () => {
             const initialContacts = generateContacts();
             const testId = initialContacts[0].id;
-            const testCache = new ContactCache(initialContacts);
+            const testCache = new ContactCacheService(initialContacts);
 
             const result = testCache.get(testId);
 
@@ -39,7 +39,7 @@ describe('Contact Cache', () => {
         });
 
         it('should return null if contact does not exist for the specified id', () => {
-            const testCache = new ContactCache();
+            const testCache = new ContactCacheService();
 
             const result = testCache.get('invalid-id');
 
@@ -50,7 +50,7 @@ describe('Contact Cache', () => {
         it('should add a contact to cache with specified id as key', () => {
             const testContact = generateContacts()[0];
             const testId = testContact.id;
-            const testCache = new ContactCache();
+            const testCache = new ContactCacheService();
 
             testCache.add(testId, testContact);
 
@@ -59,7 +59,7 @@ describe('Contact Cache', () => {
         it('should return the contact back to the caller', () => {
             const testContact = generateContacts()[0];
             const testId = testContact.id;
-            const testCache = new ContactCache();
+            const testCache = new ContactCacheService();
 
             const result = testCache.add(testId, testContact);
 
@@ -71,7 +71,7 @@ describe('Contact Cache', () => {
             const testContacts = generateContacts();
             const testContact = testContacts[0];
             const testId = testContact.id;
-            const testCache = new ContactCache(testContacts);
+            const testCache = new ContactCacheService(testContacts);
             const expectedLastName = chance.word();
 
             testCache.update(testId, 'lastName', expectedLastName);
@@ -82,7 +82,7 @@ describe('Contact Cache', () => {
             const testContacts = generateContacts();
             const testContact = testContacts[0];
             const testId = testContact.id;
-            const testCache = new ContactCache(testContacts);
+            const testCache = new ContactCacheService(testContacts);
             const expectedLastName = chance.word();
 
             const result = testCache.update(
@@ -101,7 +101,7 @@ describe('Contact Cache', () => {
         it('should remove a contact by specified id', () => {
             const testContacts = generateContacts();
             const { id: testId } = testContacts[0];
-            const testCache = new ContactCache(testContacts);
+            const testCache = new ContactCacheService(testContacts);
 
             testCache.remove(testId);
 
@@ -116,7 +116,7 @@ describe('Contact Cache', () => {
                 { id: goodId, expectedResult: 1 },
                 { id: bogusId, expectedResult: 0 },
             ];
-            const testCache = new ContactCache(testContacts);
+            const testCache = new ContactCacheService(testContacts);
 
             for (const { id, expectedResult } of testIds) {
                 const result = testCache.remove(id);
@@ -124,8 +124,8 @@ describe('Contact Cache', () => {
             }
         });
     });
-    it('initializes with no contacts in cache if no initial value specified', () => {
-        const testCache = new ContactCache();
+    it('should initialize with no contacts in cache if no initial value specified', () => {
+        const testCache = new ContactCacheService();
 
         const result = testCache.getAll();
 

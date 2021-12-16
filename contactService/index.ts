@@ -11,17 +11,17 @@ import {
     IContactDB,
     IContactSearchService,
     IContactUpdateEmitter,
-    ICache,
+    ICacheService,
     ContactID,
     EventUnsubscriber,
 } from '../types';
-import ContactCache from './cache';
+import ContactCacheService from '../cacheService';
 import { findContactsByQuery } from './utils';
 
 const registerContactUpdateEventListeners = (
     updates: IContactUpdateEmitter,
     service: IContactAccessService,
-    cache: ICache<IContactDB>
+    cache: ICacheService<IContactDB>
 ): EventUnsubscriber[] => {
     return [
         updates.on(ContactUpdateEventType.ADD, async (id: ContactID) => {
@@ -43,12 +43,12 @@ const registerContactUpdateEventListeners = (
 };
 
 export default class implements IContactSearchService {
-    private _contactCache: ICache<IContactDB>;
+    private _contactCache: ICacheService<IContactDB>;
 
     constructor(
         updates: IContactUpdateEmitter,
         service: IContactAccessService,
-        cache: ICache<IContactDB> = new ContactCache()
+        cache: ICacheService<IContactDB> = new ContactCacheService()
     ) {
         this._contactCache = cache;
 

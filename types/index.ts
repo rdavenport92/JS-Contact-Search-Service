@@ -56,7 +56,7 @@ export interface IContactUpdateEmitter {
     on: ContactEvent;
 }
 
-// Contact access types
+// Contact types
 
 export type ContactID = string;
 
@@ -89,15 +89,13 @@ export interface IContactAccessService {
     getById(id: ContactID): Promise<IContactDB | null>;
 }
 
-// Contact search types
-
 export interface IContactSearchService {
     search: (query: string) => IContact[];
 }
 
 // Cache types
 
-export interface ICache<T> {
+export interface ICacheService<T> {
     get(id: string): T | null;
 
     getAll(): T[];
@@ -107,8 +105,4 @@ export interface ICache<T> {
     remove(id: string): number;
 
     update(id: string, field: string, value: string): T;
-}
-
-export interface IContactCacheContent {
-    [key: ContactID]: IContactDB;
 }
