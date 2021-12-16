@@ -14,10 +14,9 @@ const addContactUpdatesHandler = (
     getContactById: (id: ContactID) => Promise<IContactRaw>,
     addToCache: (id: ContactID, contact: IContactRaw) => IContactRaw
 ) =>
-    onUpdates(ContactUpdateEventType.ADD, async (id: ContactID) => {
-        const contact = await getContactById(id);
-        addToCache(id, contact);
-    });
+    onUpdates(ContactUpdateEventType.ADD, async (id: ContactID) =>
+        addToCache(id, await getContactById(id))
+    );
 
 const changeContactUpdatesHandler = (
     onUpdates: ChangeContactEventHandler,
