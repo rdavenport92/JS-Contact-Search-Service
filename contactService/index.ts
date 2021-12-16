@@ -19,7 +19,7 @@ import getEventHandlers from './eventHandlers';
 
 export default class implements IContactSearchService {
     private _contactCache: ICacheService<IContactDB>;
-    private _eventUnsubscribers: EventUnsubscriber[];
+    private _subscriptions: EventUnsubscriber[];
 
     constructor(
         updates: IContactUpdateEmitter,
@@ -33,7 +33,7 @@ export default class implements IContactSearchService {
     ) {
         this._contactCache = cache;
 
-        this._eventUnsubscribers = registerEventHandlers(
+        this._subscriptions = registerEventHandlers(
             updates,
             service,
             this._contactCache
@@ -42,5 +42,11 @@ export default class implements IContactSearchService {
 
     search(query: string): IContact[] {
         return findContactsByQuery(query, this._contactCache.getAll());
+    }
+
+    removeListeners() {
+        for (const unsub of this._subscriptions) {
+            unsub();
+        }
     }
 }
