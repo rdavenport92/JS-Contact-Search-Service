@@ -28,6 +28,7 @@ export type RegisterEventHandlerT = (
 ) => EventUnsubscriber[];
 
 type SearchEngineT = (query: string, contacts: IContactRaw[]) => IContact[];
+
 export default class implements IContactSearchService {
     private _contactCache: ICacheService<IContactRaw>;
     private _subscriptions: EventUnsubscriber[];
