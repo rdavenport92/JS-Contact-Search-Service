@@ -107,17 +107,21 @@ describe('Contact Cache', () => {
 
             expect(testCache.get(testId)).to.be.null;
         });
-        it('should return the contact back to the caller', () => {
+        it('should return number of items deleted', () => {
             const testContacts = generateContacts();
             const testContact = testContacts[0];
-            const testId = testContact.id;
+            const goodId = testContact.id;
+            const bogusId = goodId + 1;
+            const testIds = [
+                { id: goodId, expectedResult: 1 },
+                { id: bogusId, expectedResult: 0 },
+            ];
             const testCache = new ContactCache(testContacts);
 
-            const result = testCache.remove(
-                testId
-            );
-
-            expect(result).to.deep.equal(testContact);
+            for (const { id, expectedResult } of testIds) {
+                const result = testCache.remove(id);
+                expect(result).to.equal(expectedResult);
+            }
         });
     });
     it('initializes with no contacts in cache if no initial value specified', () => {

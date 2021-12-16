@@ -104,7 +104,7 @@ export interface ICache<T> {
 
     add(id: string, newItem: T): T;
 
-    remove(id: string): T;
+    remove(id: string): number;
 
     update(id: string, field: string, value: string): T;
 }

@@ -1,9 +1,15 @@
-import { ContactID, IContactCacheContent, ICache, IContactDB } from '../types';
+import NodeCache from 'node-cache';
+
+import { ContactID, ICache, IContactDB } from '../types';
 
 export default class ContactCache implements ICache<IContactDB> {
-    private _content: IContactCacheContent = {};
+    private _cache: NodeCache;
 
-    constructor(initialContactCacheContent: IContactDB[] = []) {
+    constructor(
+        initialContactCacheContent: IContactDB[] = [],
+        cache: NodeCache = new NodeCache()
+    ) {
+        this._cache = cache;
         this._initializeContactCache(initialContactCacheContent);
     }
 
@@ -13,41 +19,28 @@ export default class ContactCache implements ICache<IContactDB> {
         }
     }
 
-    get(id: ContactID) {
-        return !!this._content[id]
-            ? {
-                  ...this._content[id],
-              }
-            : null;
-    }
+    get = (id: ContactID) => this._cache.get<IContactDB>(id) || null;
 
-    getAll() {
-        return Object.keys(this._content).map((id) => this._content[id]);
-    }
+    getAll = () =>
+        this._cache.keys().map((key) => this._cache.get<IContactDB>(key));
 
-    add(id: ContactID, contact: IContactDB) {
-        this._content[id] = contact;
-        return this._content[id];
-    }
+    add = (id: ContactID, contact: IContactDB) =>
+        this._cache.set(id, contact) && contact;
 
-    remove(id: ContactID) {
-        if (!!this._content[id]) {
-            const contactToDelete = { ...this._content[id] };
-
-            delete this._content[id];
-
-            return contactToDelete;
-        }
-    }
+    remove = (id: ContactID) => this._cache.del(id);
 
     update(id: ContactID, field: string, value: string) {
-        if (!!this._content[id]) {
+        const contactToUpdate = this._cache.get<IContactDB>(id);
+
+        if (!!contactToUpdate) {
             const updatedContact = {
-                ...this._content[id],
+                ...contactToUpdate,
                 [field]: value,
             };
-            this._content[id] = updatedContact;
-            return this._content[id];
+
+            this._cache.set(id, updatedContact);
+
+            return updatedContact;
         }
     }
 }
