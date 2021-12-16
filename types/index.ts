@@ -104,3 +104,36 @@ export interface ICacheService<T> {
 
     update(id: string, field: string, value: string): T;
 }
+
+// Query types
+
+export type QueryObjectT<T> = {
+    [K in QueryObjFieldT<T>]: T[K];
+};
+
+export type QueryObjFieldT<T> = keyof T & string;
+
+export type QueryObjFieldsT<T> = QueryObjFieldT<T>[];
+
+export type QueryMatcherMapT<T> = {
+    [K in QueryObjFieldT<T>]: QueryMatcherT<T>;
+};
+
+export type QueryMatcherT<T> = (
+    query: string,
+    obj: QueryObjectT<T>,
+    field: QueryObjFieldT<T>
+) => boolean;
+
+export interface IQueryMatcherPlugin<T> {
+    applicableQueryFields: QueryObjFieldsT<T>;
+    match: QueryMatcherT<T>;
+}
+
+export interface ISearchEngine<T1, T2 = T1> {
+    search: (
+        query: string,
+        contentToSearch: T1[],
+        handleResult?: <T2>(result: T1) => T2
+    ) => T2[];
+}
