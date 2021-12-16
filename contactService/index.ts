@@ -15,7 +15,25 @@ import {
 } from '../types';
 import ContactCacheService from '../cacheService';
 import { findContactsByQuery } from './utils';
-import getEventHandlers from './eventHandlers';
+import {
+    addContactUpdatesHandler,
+    changeContactUpdatesHandler,
+    removeContactUpdatesHandler,
+} from './eventHandlers';
+
+const _registerEventHandlers = (
+    updates: IContactUpdateEmitter,
+    service: IContactAccessService,
+    cache: ICacheService<IContactDB>
+): EventUnsubscriber[] => {
+    const onUpdates = updates.on.bind(updates);
+
+    return [
+        addContactUpdatesHandler(onUpdates, service.getById, cache.add),
+        changeContactUpdatesHandler(onUpdates, cache.update),
+        removeContactUpdatesHandler(onUpdates, cache.remove),
+    ];
+};
 
 export default class implements IContactSearchService {
     private _contactCache: ICacheService<IContactDB>;
@@ -29,7 +47,7 @@ export default class implements IContactSearchService {
             updates: IContactUpdateEmitter,
             service: IContactAccessService,
             cache: ICacheService<IContactDB>
-        ) => EventUnsubscriber[] = getEventHandlers
+        ) => EventUnsubscriber[] = _registerEventHandlers
     ) {
         this._contactCache = cache;
 
