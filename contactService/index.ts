@@ -14,7 +14,7 @@ import {
     EventUnsubscriber,
 } from '../types';
 import ContactCacheService from '../cacheService';
-import { findContactsByQuery } from './utils';
+import findContactsByQuery from './queryHelper';
 import {
     addContactUpdatesHandler,
     changeContactUpdatesHandler,
@@ -38,6 +38,10 @@ const _registerEventHandlers = (
 export default class implements IContactSearchService {
     private _contactCache: ICacheService<IContactDB>;
     private _subscriptions: EventUnsubscriber[];
+    private _searchEngine: (
+        query: string,
+        contacts: IContactDB[]
+    ) => IContact[];
 
     constructor(
         updates: IContactUpdateEmitter,
@@ -47,9 +51,14 @@ export default class implements IContactSearchService {
             updates: IContactUpdateEmitter,
             service: IContactAccessService,
             cache: ICacheService<IContactDB>
-        ) => EventUnsubscriber[] = _registerEventHandlers
+        ) => EventUnsubscriber[] = _registerEventHandlers,
+        searchEngine: (
+            query: string,
+            contacts: IContactDB[]
+        ) => IContact[] = findContactsByQuery
     ) {
         this._contactCache = cache;
+        this._searchEngine = searchEngine;
 
         this._subscriptions = registerEventHandlers(
             updates,
@@ -58,13 +67,8 @@ export default class implements IContactSearchService {
         );
     }
 
-    search(query: string): IContact[] {
-        return findContactsByQuery(query, this._contactCache.getAll());
-    }
+    search = (query: string): IContact[] =>
+        this._searchEngine(query, this._contactCache.getAll());
 
-    removeListeners() {
-        for (const unsub of this._subscriptions) {
-            unsub();
-        }
-    }
+    removeListeners = () => this._subscriptions.forEach((unsub) => unsub());
 }
