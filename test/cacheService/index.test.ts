@@ -3,7 +3,7 @@ import Chance from 'chance';
 import Contact from '../../accessLayer/model';
 
 import ContactCacheService from '../../cacheService';
-import { IContactDB } from '../../types';
+import { IContactRaw } from '../../types';
 import uuid from '../../utilities/uuid';
 
 const chance = new Chance();
@@ -11,9 +11,9 @@ const chance = new Chance();
 const generateContacts = (
     minContacts: number = 1,
     maxContacts: number = 1
-): IContactDB[] =>
+): IContactRaw[] =>
     [...Array(chance.integer({ min: minContacts, max: maxContacts }))].map(
-        () => new Contact(uuid()) as IContactDB
+        () => new Contact(uuid()) as IContactRaw
     );
 
 describe('Contact Cache', () => {

@@ -1,4 +1,4 @@
-import { IContact, IContactDB } from '../types';
+import { IContact, IContactRaw } from '../types';
 
 const MATCH_DIGITS_REGEX = /\d+/g;
 
@@ -7,13 +7,13 @@ const stripToDigits = (value: string) =>
 
 const defaultMatcher = (
     query: string,
-    contact: IContactDB,
+    contact: IContactRaw,
     contactField: string
 ) => contact[contactField].includes(query);
 
 const phoneNumberMatcher = (
     query: string,
-    contact: IContactDB,
+    contact: IContactRaw,
     contactField: string
 ) => {
     const cleanQuery = stripToDigits(query);
@@ -23,7 +23,7 @@ const phoneNumberMatcher = (
 
 const fullNameMatcher = (
     query: string,
-    contact: IContactDB,
+    contact: IContactRaw,
     contactField: string
 ) => {
     const { lastName } = contact;
@@ -39,7 +39,7 @@ const queryMatcherMap = {
     nickName: fullNameMatcher,
 };
 
-const doesQueryMatchContactField = (query: string, contact: IContactDB) =>
+const doesQueryMatchContactField = (query: string, contact: IContactRaw) =>
     !!Object.keys(contact).find((fieldToCheck) => {
         if (contact[fieldToCheck]) {
             const queryMatcher =
@@ -91,7 +91,7 @@ class ContactFactory {
         lastName,
         primaryEmail,
         addressLine1,
-    }: IContactDB): IContact => ({
+    }: IContactRaw): IContact => ({
         id,
         name: `${nickName || firstName} ${lastName}`,
         email: `${primaryEmail}`,
@@ -100,7 +100,7 @@ class ContactFactory {
     });
 }
 
-export default (query: string, contacts: IContactDB[]): IContact[] =>
+export default (query: string, contacts: IContactRaw[]): IContact[] =>
     contacts.reduce<IContact[]>(
         (matchedContacts, currentContact) =>
             doesQueryMatchContactField(query, currentContact)

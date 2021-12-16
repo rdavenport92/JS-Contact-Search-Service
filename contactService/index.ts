@@ -7,7 +7,7 @@
 import {
     IContactAccessService,
     IContact,
-    IContactDB,
+    IContactRaw,
     IContactSearchService,
     IContactUpdateEmitter,
     ICacheService,
@@ -21,22 +21,22 @@ import getEventHandlers from './eventHandlers';
 
 export type RegisterEventHandlerT = (
     onUpdates: ContactEventHandler,
-    getContactById: (id: ContactID) => Promise<IContactDB>,
-    addToCache: (id: ContactID, contact: IContactDB) => IContactDB,
-    updateCache: (id: ContactID, field: string, value: string) => IContactDB,
+    getContactById: (id: ContactID) => Promise<IContactRaw>,
+    addToCache: (id: ContactID, contact: IContactRaw) => IContactRaw,
+    updateCache: (id: ContactID, field: string, value: string) => IContactRaw,
     removeFromCache: (id: ContactID) => number
 ) => EventUnsubscriber[];
 
-type SearchEngineT = (query: string, contacts: IContactDB[]) => IContact[];
+type SearchEngineT = (query: string, contacts: IContactRaw[]) => IContact[];
 export default class implements IContactSearchService {
-    private _contactCache: ICacheService<IContactDB>;
+    private _contactCache: ICacheService<IContactRaw>;
     private _subscriptions: EventUnsubscriber[];
     private _searchEngine: SearchEngineT;
 
     constructor(
         updates: IContactUpdateEmitter,
         service: IContactAccessService,
-        cache: ICacheService<IContactDB> = new ContactCacheService(),
+        cache: ICacheService<IContactRaw> = new ContactCacheService(),
         registerEventHandlers: RegisterEventHandlerT = getEventHandlers,
         searchEngine: SearchEngineT = findContactsByQuery
     ) {

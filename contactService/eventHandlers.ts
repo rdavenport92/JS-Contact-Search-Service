@@ -1,7 +1,7 @@
 import {
     AddContactEventHandler,
     ContactID,
-    IContactDB,
+    IContactRaw,
     ContactUpdateEventType,
     ChangeContactEventHandler,
     RemoveContactEventHandler,
@@ -11,8 +11,8 @@ import {
 
 const addContactUpdatesHandler = (
     onUpdates: AddContactEventHandler,
-    getContactById: (id: ContactID) => Promise<IContactDB>,
-    addToCache: (id: ContactID, contact: IContactDB) => IContactDB
+    getContactById: (id: ContactID) => Promise<IContactRaw>,
+    addToCache: (id: ContactID, contact: IContactRaw) => IContactRaw
 ) =>
     onUpdates(ContactUpdateEventType.ADD, async (id: ContactID) => {
         const contact = await getContactById(id);
@@ -21,7 +21,7 @@ const addContactUpdatesHandler = (
 
 const changeContactUpdatesHandler = (
     onUpdates: ChangeContactEventHandler,
-    updateCache: (id: ContactID, field: string, value: string) => IContactDB
+    updateCache: (id: ContactID, field: string, value: string) => IContactRaw
 ) => onUpdates(ContactUpdateEventType.CHANGE, updateCache);
 
 const removeContactUpdatesHandler = (
@@ -31,9 +31,9 @@ const removeContactUpdatesHandler = (
 
 export default (
     onUpdates: ContactEventHandler,
-    getContactById: (id: ContactID) => Promise<IContactDB>,
-    addToCache: (id: ContactID, contact: IContactDB) => IContactDB,
-    updateCache: (id: ContactID, field: string, value: string) => IContactDB,
+    getContactById: (id: ContactID) => Promise<IContactRaw>,
+    addToCache: (id: ContactID, contact: IContactRaw) => IContactRaw,
+    updateCache: (id: ContactID, field: string, value: string) => IContactRaw,
     removeFromCache: (id: ContactID) => number
 ): EventUnsubscriber[] => [
     addContactUpdatesHandler(onUpdates, getContactById, addToCache),

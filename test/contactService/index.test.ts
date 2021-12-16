@@ -5,7 +5,7 @@ import {
     EventUnsubscriber,
     ICacheService,
     IContactAccessService,
-    IContactDB,
+    IContactRaw,
     IContactUpdateEmitter,
 } from '../../types';
 
@@ -28,7 +28,7 @@ describe('Contact Service', () => {
             const contactService = new ContactService(
                 { on: () => null } as unknown as IContactUpdateEmitter,
                 {} as IContactAccessService,
-                {} as ICacheService<IContactDB>,
+                {} as ICacheService<IContactRaw>,
                 mockEventRegister
             );
 

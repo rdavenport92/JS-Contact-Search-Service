@@ -58,7 +58,7 @@ export type EventUnsubscriber = () => void;
 
 export type ContactID = string;
 
-export interface IContactDB {
+export interface IContactRaw {
     id: ContactID;
     firstName: string;
     lastName: string;
@@ -84,7 +84,7 @@ export interface IContact {
 }
 
 export interface IContactAccessService {
-    getById(id: ContactID): Promise<IContactDB | null>;
+    getById(id: ContactID): Promise<IContactRaw | null>;
 }
 
 export interface IContactSearchService {
