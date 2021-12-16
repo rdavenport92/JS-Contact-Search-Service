@@ -5,9 +5,11 @@ import {
     ContactUpdateEventType,
     ChangeContactEventHandler,
     RemoveContactEventHandler,
+    EventUnsubscriber,
+    ContactEventHandler,
 } from '../types';
 
-export const addContactUpdatesHandler = (
+const addContactUpdatesHandler = (
     onUpdates: AddContactEventHandler,
     getContactById: (id: ContactID) => Promise<IContactDB>,
     addToCache: (id: ContactID, contact: IContactDB) => IContactDB
@@ -17,12 +19,24 @@ export const addContactUpdatesHandler = (
         addToCache(id, contact);
     });
 
-export const changeContactUpdatesHandler = (
+const changeContactUpdatesHandler = (
     onUpdates: ChangeContactEventHandler,
     updateCache: (id: ContactID, field: string, value: string) => IContactDB
 ) => onUpdates(ContactUpdateEventType.CHANGE, updateCache);
 
-export const removeContactUpdatesHandler = (
+const removeContactUpdatesHandler = (
     onUpdates: RemoveContactEventHandler,
     removeFromCache: (id: ContactID) => number
 ) => onUpdates(ContactUpdateEventType.REMOVE, removeFromCache);
+
+export default (
+    onUpdates: ContactEventHandler,
+    getContactById: (id: ContactID) => Promise<IContactDB>,
+    addToCache: (id: ContactID, contact: IContactDB) => IContactDB,
+    updateCache: (id: ContactID, field: string, value: string) => IContactDB,
+    removeFromCache: (id: ContactID) => number
+): EventUnsubscriber[] => [
+    addContactUpdatesHandler(onUpdates, getContactById, addToCache),
+    changeContactUpdatesHandler(onUpdates, updateCache),
+    removeContactUpdatesHandler(onUpdates, removeFromCache),
+];

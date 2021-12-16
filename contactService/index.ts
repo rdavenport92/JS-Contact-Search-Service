@@ -12,58 +12,42 @@ import {
     IContactUpdateEmitter,
     ICacheService,
     EventUnsubscriber,
+    ContactEventHandler,
+    ContactID,
 } from '../types';
 import ContactCacheService from '../cacheService';
 import findContactsByQuery from './queryHelper';
-import {
-    addContactUpdatesHandler,
-    changeContactUpdatesHandler,
-    removeContactUpdatesHandler,
-} from './eventHandlers';
+import getEventHandlers from './eventHandlers';
 
-const _registerEventHandlers = (
-    updates: IContactUpdateEmitter,
-    service: IContactAccessService,
-    cache: ICacheService<IContactDB>
-): EventUnsubscriber[] => {
-    const onUpdates = updates.on.bind(updates);
+export type RegisterEventHandlerT = (
+    onUpdates: ContactEventHandler,
+    getContactById: (id: ContactID) => Promise<IContactDB>,
+    addToCache: (id: ContactID, contact: IContactDB) => IContactDB,
+    updateCache: (id: ContactID, field: string, value: string) => IContactDB,
+    removeFromCache: (id: ContactID) => number
+) => EventUnsubscriber[];
 
-    return [
-        addContactUpdatesHandler(onUpdates, service.getById, cache.add),
-        changeContactUpdatesHandler(onUpdates, cache.update),
-        removeContactUpdatesHandler(onUpdates, cache.remove),
-    ];
-};
-
+type SearchEngineT = (query: string, contacts: IContactDB[]) => IContact[];
 export default class implements IContactSearchService {
     private _contactCache: ICacheService<IContactDB>;
     private _subscriptions: EventUnsubscriber[];
-    private _searchEngine: (
-        query: string,
-        contacts: IContactDB[]
-    ) => IContact[];
+    private _searchEngine: SearchEngineT;
 
     constructor(
         updates: IContactUpdateEmitter,
         service: IContactAccessService,
         cache: ICacheService<IContactDB> = new ContactCacheService(),
-        registerEventHandlers: (
-            updates: IContactUpdateEmitter,
-            service: IContactAccessService,
-            cache: ICacheService<IContactDB>
-        ) => EventUnsubscriber[] = _registerEventHandlers,
-        searchEngine: (
-            query: string,
-            contacts: IContactDB[]
-        ) => IContact[] = findContactsByQuery
+        registerEventHandlers: RegisterEventHandlerT = getEventHandlers,
+        searchEngine: SearchEngineT = findContactsByQuery
     ) {
         this._contactCache = cache;
         this._searchEngine = searchEngine;
-
         this._subscriptions = registerEventHandlers(
-            updates,
-            service,
-            this._contactCache
+            updates.on.bind(updates),
+            service.getById,
+            this._contactCache.add,
+            this._contactCache.update,
+            this._contactCache.remove
         );
     }
 
