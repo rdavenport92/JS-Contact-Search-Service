@@ -1,5 +1,10 @@
 import { IContact, IContactDB } from '../types';
 
+const MATCH_DIGITS_REGEX = /\d+/g;
+
+const stripToDigits = (value: string) =>
+    value.match(MATCH_DIGITS_REGEX)?.join('');
+
 const defaultMatcher = (
     query: string,
     contact: IContactDB,
@@ -11,8 +16,8 @@ const phoneNumberMatcher = (
     contact: IContactDB,
     contactField: string
 ) => {
-    const cleanQuery = query.match(/\d+/g)?.join('');
-    const cleanPhoneNumber = contact[contactField].match(/\d+/g)?.join('');
+    const cleanQuery = stripToDigits(query);
+    const cleanPhoneNumber = stripToDigits(contact[contactField]);
     return cleanPhoneNumber.includes(cleanQuery);
 };
 
@@ -45,20 +50,23 @@ const doesQueryMatchContactField = (query: string, contact: IContactDB) =>
     });
 
 const formatPhoneNumber = (potentialPhoneNumber: string) => {
-    const digits = potentialPhoneNumber.match(/\d+/g).join('');
+    const digits = stripToDigits(potentialPhoneNumber);
+    const minDigits = 10;
+    const maxDigits = 11;
+    const areaRange = [0, 3];
+    const prefixRange = [3, 6];
+    const lineRange = [6, 10];
 
     const usableDigits =
-        digits.length == 10
+        digits.length == minDigits
             ? digits
-            : digits.length == 11
+            : digits.length == maxDigits
             ? digits.substring(1)
             : null;
 
-    const [area, prefix, line] = [
-        usableDigits.slice(0, 3),
-        usableDigits.slice(3, 6),
-        usableDigits.slice(6, 10),
-    ];
+    const [area, prefix, line] = [areaRange, prefixRange, lineRange].map(
+        (range) => usableDigits?.slice(...range)
+    );
 
     return `(${area}) ${prefix}-${line}`;
 };
@@ -93,9 +101,10 @@ class ContactFactory {
 }
 
 export default (query: string, contacts: IContactDB[]): IContact[] =>
-    contacts.reduce<IContact[]>((matchedContacts, currentContact) => {
-        const isMatch = doesQueryMatchContactField(query, currentContact);
-        return isMatch
-            ? [...matchedContacts, ContactFactory.create(currentContact)]
-            : matchedContacts;
-    }, []);
+    contacts.reduce<IContact[]>(
+        (matchedContacts, currentContact) =>
+            doesQueryMatchContactField(query, currentContact)
+                ? [...matchedContacts, ContactFactory.create(currentContact)]
+                : matchedContacts,
+        []
+    );
