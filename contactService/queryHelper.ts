@@ -71,15 +71,14 @@ const formatPhoneNumber = (potentialPhoneNumber: string) => {
     return `(${area}) ${prefix}-${line}`;
 };
 
-const formatPhoneNumbers = (phoneNumbers: string[]) => {
-    return phoneNumbers.reduce<string[]>((phoneNumbers, currentPhoneNumber) => {
-        if (currentPhoneNumber) {
-            return [...phoneNumbers, formatPhoneNumber(currentPhoneNumber)];
-        }
-
-        return phoneNumbers;
-    }, []);
-};
+const formatPhoneNumbers = (phoneNumbers: string[]) =>
+    phoneNumbers.reduce<string[]>(
+        (phoneNumbers, currentPhoneNumber) =>
+            currentPhoneNumber
+                ? [...phoneNumbers, formatPhoneNumber(currentPhoneNumber)]
+                : phoneNumbers,
+        []
+    );
 
 class ContactFactory {
     static create = ({
