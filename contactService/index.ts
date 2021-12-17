@@ -6,7 +6,7 @@
 
 import ContactCacheService from '../cacheService';
 import { ICacheService } from '../cacheService/types';
-import { IContactAccessService, IContactSearchService } from '../types';
+import { IContactAccessService, IContactSearchService } from './types';
 import { IContact, IContactRaw } from './contactHelper/types';
 import EventManager from './eventManager';
 import {

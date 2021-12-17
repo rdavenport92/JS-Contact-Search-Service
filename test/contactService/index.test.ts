@@ -8,7 +8,7 @@ import {
     IContactUpdateEmitter,
     RegisterEventHandlerT,
 } from '../../contactService/eventManager/types';
-import { IContactAccessService } from '../../types';
+import { IContactAccessService } from '../../contactService/types';
 
 const chance = new Chance();
 
