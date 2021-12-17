@@ -14,10 +14,11 @@ import {
     EventUnsubscriber,
     ContactEventHandler,
     ContactID,
+    ISearchEngine,
 } from '../types';
 import ContactCacheService from '../cacheService';
-import findContactsByQuery from './queryHelper';
-import getEventHandlers from './eventHandlers';
+import contactSearchEngine from './searchEngine';
+import registerContactUpdateEventHandlers from './eventHandlers';
 
 export type RegisterEventHandlerT = (
     onUpdates: ContactEventHandler,
@@ -27,19 +28,17 @@ export type RegisterEventHandlerT = (
     removeFromCache: (id: ContactID) => number
 ) => EventUnsubscriber[];
 
-type SearchEngineT = (query: string, contacts: IContactRaw[]) => IContact[];
-
 export default class implements IContactSearchService {
     private _contactCache: ICacheService<IContactRaw>;
     private _subscriptions: EventUnsubscriber[];
-    private _searchEngine: SearchEngineT;
+    private _searchEngine: ISearchEngine<IContactRaw, IContact>;
 
     constructor(
         updates: IContactUpdateEmitter,
         service: IContactAccessService,
         cache: ICacheService<IContactRaw> = new ContactCacheService(),
-        registerEventHandlers: RegisterEventHandlerT = getEventHandlers,
-        searchEngine: SearchEngineT = findContactsByQuery
+        registerEventHandlers: RegisterEventHandlerT = registerContactUpdateEventHandlers,
+        searchEngine: ISearchEngine<IContactRaw, IContact> = contactSearchEngine
     ) {
         this._contactCache = cache;
         this._searchEngine = searchEngine;
@@ -53,7 +52,7 @@ export default class implements IContactSearchService {
     }
 
     search = (query: string): IContact[] =>
-        this._searchEngine(query, this._contactCache.getAll());
+        this._searchEngine.search(query, this._contactCache.getAll());
 
     removeListeners = () => this._subscriptions.forEach((unsub) => unsub());
 }
