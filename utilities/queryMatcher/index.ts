@@ -1,6 +1,5 @@
 import {
     IQueryMatcherPlugin,
-    QueryObjFieldsT,
     QueryMatcherMapT,
     QueryMatcherT,
     QueryObjectT,
@@ -37,7 +36,7 @@ const assignMatcherPluginHandlers = <T>(
 
 export class QueryMatcherMapFactory {
     static create = <T>(
-        objFields: QueryObjFieldsT<T>,
+        objFields: QueryObjFieldT<T>[],
         matcherPlugins: IQueryMatcherPlugin<T>[],
         defaultMatchHandler: QueryMatcherT<T> = defaultMatcher
     ): QueryMatcherMapT<T> =>

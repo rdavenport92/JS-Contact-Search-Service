@@ -4,8 +4,6 @@ export type QueryObjectT<T> = {
 
 export type QueryObjFieldT<T> = keyof T & string;
 
-export type QueryObjFieldsT<T> = QueryObjFieldT<T>[];
-
 export type QueryMatcherMapT<T> = {
     [K in QueryObjFieldT<T>]: QueryMatcherT<T>;
 };
@@ -17,6 +15,6 @@ export type QueryMatcherT<T> = (
 ) => boolean;
 
 export interface IQueryMatcherPlugin<T> {
-    applicableQueryFields: QueryObjFieldsT<T>;
+    applicableQueryFields: QueryObjFieldT<T>[];
     match: QueryMatcherT<T>;
 }
