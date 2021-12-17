@@ -5,7 +5,7 @@ import {
     QueryMatcherT,
     QueryObjectT,
     QueryObjFieldT,
-} from '../types';
+} from './types';
 
 const defaultMatcher = <T>(
     query: string,

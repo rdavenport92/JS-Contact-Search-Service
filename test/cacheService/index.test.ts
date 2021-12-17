@@ -1,9 +1,8 @@
 import { expect } from 'chai';
 import Chance from 'chance';
 import Contact from '../../accessLayer/model';
-
 import ContactCacheService from '../../cacheService';
-import { IContactRaw } from '../../types';
+import { IContactRaw } from '../../contactService/contactHelper/types';
 import uuid from '../../utilities/uuid';
 
 const chance = new Chance();

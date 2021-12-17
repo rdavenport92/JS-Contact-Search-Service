@@ -1,46 +1,43 @@
 import NodeCache from 'node-cache';
 
-import { ContactID, ICacheService, IContactRaw } from '../types';
+import { ICacheService } from './types';
 
-export default class ContactCacheService implements ICacheService<IContactRaw> {
+export default class CacheService<T extends { id: string }>
+    implements ICacheService<T>
+{
     private _cache: NodeCache;
 
-    constructor(
-        initialContactCacheContent: IContactRaw[] = [],
-        cache: NodeCache = new NodeCache()
-    ) {
+    constructor(initialCache: T[] = [], cache: NodeCache = new NodeCache()) {
         this._cache = cache;
-        this._initializeContactCache(initialContactCacheContent);
+        this._initializeCache(initialCache);
     }
 
-    private _initializeContactCache(initialContactCacheContent: IContactRaw[]) {
-        for (const currentContact of initialContactCacheContent) {
-            this.add(currentContact.id, currentContact);
+    private _initializeCache(initialCache: T[]) {
+        for (const item of initialCache) {
+            this.add(item.id, item);
         }
     }
 
-    get = (id: ContactID) => this._cache.get<IContactRaw>(id) || null;
+    get = (id: string) => this._cache.get<T>(id) || null;
 
-    getAll = () =>
-        this._cache.keys().map((key) => this._cache.get<IContactRaw>(key));
+    getAll = () => this._cache.keys().map((key) => this._cache.get<T>(key));
 
-    add = (id: ContactID, contact: IContactRaw) =>
-        this._cache.set(id, contact) ? contact : null;
+    add = (id: string, item: T) => (this._cache.set(id, item) ? item : null);
 
-    remove = (id: ContactID) => this._cache.del(id);
+    remove = (id: string) => this._cache.del(id);
 
-    update = (id: ContactID, field: string, value: string) => {
-        const contactToUpdate = this._cache.get<IContactRaw>(id);
+    update = (id: string, field: string, value: string) => {
+        const itemToUpdate = this._cache.get<T>(id);
 
-        if (!!contactToUpdate) {
-            const updatedContact = {
-                ...contactToUpdate,
+        if (!!itemToUpdate) {
+            const updatedItem = {
+                ...itemToUpdate,
                 [field]: value,
             };
 
-            this._cache.set(id, updatedContact);
+            this._cache.set(id, updatedItem);
 
-            return updatedContact;
+            return updatedItem;
         }
     };
 }

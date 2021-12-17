@@ -1,13 +1,12 @@
+import { ContactID, IContactRaw } from '../contactHelper/types';
 import {
     AddContactEventHandler,
-    ContactID,
-    IContactRaw,
-    ContactUpdateEventType,
     ChangeContactEventHandler,
-    RemoveContactEventHandler,
-    EventUnsubscriber,
     ContactEventHandler,
-} from '../types';
+    ContactUpdateEventType,
+    EventUnsubscriber,
+    RemoveContactEventHandler,
+} from './types';
 
 const addContactUpdatesHandler = (
     onUpdates: AddContactEventHandler,
@@ -28,14 +27,20 @@ const removeContactUpdatesHandler = (
     removeFromCache: (id: ContactID) => number
 ) => onUpdates(ContactUpdateEventType.REMOVE, removeFromCache);
 
-export default (
-    onUpdates: ContactEventHandler,
-    getContactById: (id: ContactID) => Promise<IContactRaw>,
-    addToCache: (id: ContactID, contact: IContactRaw) => IContactRaw,
-    updateCache: (id: ContactID, field: string, value: string) => IContactRaw,
-    removeFromCache: (id: ContactID) => number
-): EventUnsubscriber[] => [
-    addContactUpdatesHandler(onUpdates, getContactById, addToCache),
-    changeContactUpdatesHandler(onUpdates, updateCache),
-    removeContactUpdatesHandler(onUpdates, removeFromCache),
-];
+export default class {
+    static registerHandlers = (
+        onUpdates: ContactEventHandler,
+        getContactById: (id: ContactID) => Promise<IContactRaw>,
+        addToCache: (id: ContactID, contact: IContactRaw) => IContactRaw,
+        updateCache: (
+            id: ContactID,
+            field: string,
+            value: string
+        ) => IContactRaw,
+        removeFromCache: (id: ContactID) => number
+    ): EventUnsubscriber[] => [
+        addContactUpdatesHandler(onUpdates, getContactById, addToCache),
+        changeContactUpdatesHandler(onUpdates, updateCache),
+        removeContactUpdatesHandler(onUpdates, removeFromCache),
+    ];
+}

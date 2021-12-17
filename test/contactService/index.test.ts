@@ -1,13 +1,14 @@
 import { expect } from 'chai';
 import { Chance } from 'chance';
-import ContactService, { RegisterEventHandlerT } from '../../contactService';
+import { ICacheService } from '../../cacheService/types';
+import ContactService from '../../contactService';
+import { IContactRaw } from '../../contactService/contactHelper/types';
 import {
     EventUnsubscriber,
-    ICacheService,
-    IContactAccessService,
-    IContactRaw,
     IContactUpdateEmitter,
-} from '../../types';
+    RegisterEventHandlerT,
+} from '../../contactService/eventManager/types';
+import { IContactAccessService } from '../../types';
 
 const chance = new Chance();
 

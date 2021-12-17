@@ -1,39 +1,35 @@
 import Contact from '../../accessLayer/model';
-import {
-    IContactRaw,
-    QueryObjFieldsT,
-    IContact,
-    ISearchEngine,
-} from '../../types';
 import QueryMatcher, {
     QueryMatcherMapFactory,
 } from '../../utilities/queryMatcher';
 import { ContactFactory } from '../contactHelper';
+import { IContact, IContactRaw } from '../contactHelper/types';
 import matcherPlugins from './matcherPlugins';
+import { EngineSearchT } from './types';
 
-class ContactSearchEngine implements ISearchEngine<IContactRaw, IContact> {
+class ContactSearchEngine {
     private _queryMatcher: QueryMatcher<IContactRaw>;
 
     constructor(queryMatcher: QueryMatcher<IContactRaw>) {
         this._queryMatcher = queryMatcher;
     }
 
-    search = (
+    search: EngineSearchT<IContactRaw, IContact> = (
         query: string,
         contentToSearch: IContactRaw[],
-        handleResult = ContactFactory.create
+        handleResult: (result: IContactRaw) => IContact = ContactFactory.create
     ) =>
         contentToSearch.reduce<IContact[]>(
-            (matchedContacts, currentContact) =>
-                this._queryMatcher.match(query, currentContact)
-                    ? [...matchedContacts, handleResult(currentContact)]
-                    : matchedContacts,
+            (results, currentContent) =>
+                this._queryMatcher.match(query, currentContent)
+                    ? [...results, handleResult(currentContent)]
+                    : results,
             []
         );
 }
 
 const contactQueryMatcherMap = QueryMatcherMapFactory.create<IContactRaw>(
-    Object.keys(new Contact()) as QueryObjFieldsT<IContactRaw>,
+    Object.keys(new Contact()) as (keyof IContactRaw)[],
     matcherPlugins
 );
 

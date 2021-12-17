@@ -1,5 +1,6 @@
-import { IQueryMatcherPlugin, IContactRaw } from '../../types';
 import { stripToDigits } from '../../utilities/parse';
+import { IQueryMatcherPlugin } from '../../utilities/queryMatcher/types';
+import { IContactRaw } from '../contactHelper/types';
 
 const contactFullNameMatcher: IQueryMatcherPlugin<IContactRaw> = {
     applicableQueryFields: ['firstName', 'nickName'],

@@ -4,44 +4,36 @@
 // updates and service, the 2 arguments to the constructor
 // Feel free to add files as necessary
 
-import {
-    IContactAccessService,
-    IContact,
-    IContactRaw,
-    IContactSearchService,
-    IContactUpdateEmitter,
-    ICacheService,
-    EventUnsubscriber,
-    ContactEventHandler,
-    ContactID,
-    ISearchEngine,
-} from '../types';
 import ContactCacheService from '../cacheService';
+import { ICacheService } from '../cacheService/types';
+import { IContactAccessService, IContactSearchService } from '../types';
+import { IContact, IContactRaw } from './contactHelper/types';
+import EventManager from './eventManager';
+import {
+    EventUnsubscriber,
+    IContactUpdateEmitter,
+    RegisterEventHandlerT,
+} from './eventManager/types';
 import contactSearchEngine from './searchEngine';
-import registerContactUpdateEventHandlers from './eventHandlers';
-
-export type RegisterEventHandlerT = (
-    onUpdates: ContactEventHandler,
-    getContactById: (id: ContactID) => Promise<IContactRaw>,
-    addToCache: (id: ContactID, contact: IContactRaw) => IContactRaw,
-    updateCache: (id: ContactID, field: string, value: string) => IContactRaw,
-    removeFromCache: (id: ContactID) => number
-) => EventUnsubscriber[];
+import { EngineSearchT } from './searchEngine/types';
 
 export default class implements IContactSearchService {
     private _contactCache: ICacheService<IContactRaw>;
     private _subscriptions: EventUnsubscriber[];
-    private _searchEngine: ISearchEngine<IContactRaw, IContact>;
+    private _engineSearch: EngineSearchT<IContactRaw, IContact>;
 
     constructor(
         updates: IContactUpdateEmitter,
         service: IContactAccessService,
         cache: ICacheService<IContactRaw> = new ContactCacheService(),
-        registerEventHandlers: RegisterEventHandlerT = registerContactUpdateEventHandlers,
-        searchEngine: ISearchEngine<IContactRaw, IContact> = contactSearchEngine
+        registerEventHandlers: RegisterEventHandlerT = EventManager.registerHandlers,
+        engineSearch: EngineSearchT<
+            IContactRaw,
+            IContact
+        > = contactSearchEngine.search
     ) {
         this._contactCache = cache;
-        this._searchEngine = searchEngine;
+        this._engineSearch = engineSearch;
         this._subscriptions = registerEventHandlers(
             updates.on.bind(updates),
             service.getById,
@@ -52,7 +44,7 @@ export default class implements IContactSearchService {
     }
 
     search = (query: string): IContact[] =>
-        this._searchEngine.search(query, this._contactCache.getAll());
+        this._engineSearch(query, this._contactCache.getAll());
 
     removeListeners = () => this._subscriptions.forEach((unsub) => unsub());
 }

@@ -1,5 +1,5 @@
-import { IContactRaw, IContact } from '../types';
-import { stripToDigits } from '../utilities/parse';
+import { IContactRaw, IContact } from './types';
+import { stripToDigits } from '../../utilities/parse';
 
 const formatPhoneNumber = (potentialPhoneNumber: string) => {
     const digits = stripToDigits(potentialPhoneNumber);
