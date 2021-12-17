@@ -4,7 +4,7 @@ import { ICacheService } from '../../cacheService/types';
 import ContactService from '../../contactService';
 import { IContactRaw } from '../../contactService/contactHelper/types';
 import {
-    EventUnsubscriber,
+    EventUnsubscriberT,
     IContactUpdateEmitter,
     RegisterEventHandlerT,
 } from '../../contactService/eventManager/types';
@@ -24,7 +24,7 @@ describe('Contact Service', () => {
                 });
 
             const mockEventRegister: RegisterEventHandlerT = () =>
-                testUnsubscribers as EventUnsubscriber[];
+                testUnsubscribers as EventUnsubscriberT[];
 
             const contactService = new ContactService(
                 { on: () => null } as unknown as IContactUpdateEmitter,

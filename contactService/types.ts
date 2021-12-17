@@ -1,7 +1,7 @@
-import { ContactID, IContactRaw, IContact } from './contactHelper/types';
+import { IContactRaw, IContact } from './contactHelper/types';
 
 export interface IContactAccessService {
-    getById(id: ContactID): Promise<IContactRaw | null>;
+    getById(id: string): Promise<IContactRaw | null>;
 }
 
 export interface IContactSearchService {

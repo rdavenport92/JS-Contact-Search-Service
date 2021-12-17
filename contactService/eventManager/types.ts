@@ -1,4 +1,4 @@
-import { ContactID, IContactRaw } from '../contactHelper/types';
+import { IContactRaw } from '../contactHelper/types';
 
 export enum ContactUpdateEventType {
     ADD = 'add',
@@ -6,58 +6,58 @@ export enum ContactUpdateEventType {
     CHANGE = 'change',
 }
 
-type AddContactEventListener = (id: string) => void;
-type RemoveContactEventListener = (id: string) => void;
-type ChangeContactEventListener = (
+type AddContactEventListenerT = (id: string) => void;
+type RemoveContactEventListenerT = (id: string) => void;
+type ChangeContactEventListenerT = (
     id: string,
     field: string,
     value: string
 ) => void;
 
-export type AddContactEventHandler = (
+export type AddContactEventHandlerT = (
     event: ContactUpdateEventType.ADD,
-    listener: AddContactEventListener
-) => EventUnsubscriber;
+    listener: AddContactEventListenerT
+) => EventUnsubscriberT;
 
-export type RemoveContactEventHandler = (
+export type RemoveContactEventHandlerT = (
     event: ContactUpdateEventType.REMOVE,
-    listener: RemoveContactEventListener
-) => EventUnsubscriber;
+    listener: RemoveContactEventListenerT
+) => EventUnsubscriberT;
 
-export type ChangeContactEventHandler = (
+export type ChangeContactEventHandlerT = (
     event: ContactUpdateEventType.CHANGE,
-    listener: ChangeContactEventListener
-) => EventUnsubscriber;
+    listener: ChangeContactEventListenerT
+) => EventUnsubscriberT;
 
-export type ContactEventHandler = AddContactEventHandler &
-    RemoveContactEventHandler &
-    ChangeContactEventHandler;
+export type ContactEventHandlerT = AddContactEventHandlerT &
+    RemoveContactEventHandlerT &
+    ChangeContactEventHandlerT;
 
 export interface IContactUpdateEmitter {
     listeners: {
-        [ContactUpdateEventType.ADD]: AddContactEventListener[];
-        [ContactUpdateEventType.REMOVE]: RemoveContactEventListener[];
-        [ContactUpdateEventType.CHANGE]: ChangeContactEventListener[];
+        [ContactUpdateEventType.ADD]: AddContactEventListenerT[];
+        [ContactUpdateEventType.REMOVE]: RemoveContactEventListenerT[];
+        [ContactUpdateEventType.CHANGE]: ChangeContactEventListenerT[];
     };
 
-    emit(event: ContactUpdateEventType.ADD, id: ContactID): void;
-    emit(event: ContactUpdateEventType.REMOVE, id: ContactID): void;
+    emit(event: ContactUpdateEventType.ADD, id: string): void;
+    emit(event: ContactUpdateEventType.REMOVE, id: string): void;
     emit(
         event: ContactUpdateEventType.CHANGE,
-        id: ContactID,
+        id: string,
         field: string,
         value: string
     ): void;
 
-    on: ContactEventHandler;
+    on: ContactEventHandlerT;
 }
 
 export type RegisterEventHandlerT = (
-    onUpdates: ContactEventHandler,
-    getContactById: (id: ContactID) => Promise<IContactRaw>,
-    addToCache: (id: ContactID, contact: IContactRaw) => IContactRaw,
-    updateCache: (id: ContactID, field: string, value: string) => IContactRaw,
-    removeFromCache: (id: ContactID) => number
-) => EventUnsubscriber[];
+    onUpdates: ContactEventHandlerT,
+    getContactById: (id: string) => Promise<IContactRaw>,
+    addToCache: (id: string, contact: IContactRaw) => IContactRaw,
+    updateCache: (id: string, field: string, value: string) => IContactRaw,
+    removeFromCache: (id: string) => number
+) => EventUnsubscriberT[];
 
-export type EventUnsubscriber = () => void;
+export type EventUnsubscriberT = () => void;

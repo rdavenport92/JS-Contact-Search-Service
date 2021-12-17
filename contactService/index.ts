@@ -10,7 +10,7 @@ import { IContactAccessService, IContactSearchService } from './types';
 import { IContact, IContactRaw } from './contactHelper/types';
 import EventManager from './eventManager';
 import {
-    EventUnsubscriber,
+    EventUnsubscriberT,
     IContactUpdateEmitter,
     RegisterEventHandlerT,
 } from './eventManager/types';
@@ -19,7 +19,7 @@ import { EngineSearchT } from './searchEngine/types';
 
 export default class implements IContactSearchService {
     private _contactCache: ICacheService<IContactRaw>;
-    private _subscriptions: EventUnsubscriber[];
+    private _subscriptions: EventUnsubscriberT[];
     private _engineSearch: EngineSearchT<IContactRaw, IContact>;
 
     constructor(

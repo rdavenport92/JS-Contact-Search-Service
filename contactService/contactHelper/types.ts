@@ -1,7 +1,5 @@
-export type ContactID = string;
-
 export interface IContactRaw {
-    id: ContactID;
+    id: string;
     firstName: string;
     lastName: string;
     nickName: string;
@@ -18,7 +16,7 @@ export interface IContactRaw {
 }
 
 export interface IContact {
-    id: ContactID;
+    id: string;
     name: string;
     email: string;
     phones: Array<string>;
