@@ -53,7 +53,6 @@ describe('Engine', () => {
 
             const result = searchEngine.search(testQuery, contentToSearch);
 
-            expect(result.length).to.equal(1);
             expect(result[0].testProp).to.equal(contentToSearch[i].testProp);
         });
 
