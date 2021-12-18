@@ -1,38 +1,21 @@
 import Contact from '../../accessLayer/model';
-import QueryMatcher, {
-    QueryMatcherMapFactory,
-} from '../../utilities/queryMatcher';
 import { ContactFactory } from '../contactHelper';
-import { IContact, IContactRaw } from '../contactHelper/types';
-import matcherPlugins from './matcherPlugins';
-import { EngineSearchT } from './types';
+import { IContactRaw } from '../contactHelper/types';
+import QueryMatcher, {
+    defaultMatcher,
+    QueryMatcherMapFactory,
+} from './queryMatcher';
+import matcherPlugins from './queryMatcher/plugins';
+import Engine from './engine';
 
-class ContactSearchEngine {
-    private _queryMatcher: QueryMatcher<IContactRaw>;
+const fieldsToSearch = Object.keys(new Contact()) as (keyof IContactRaw)[];
 
-    constructor(queryMatcher: QueryMatcher<IContactRaw>) {
-        this._queryMatcher = queryMatcher;
-    }
-
-    search: EngineSearchT<IContactRaw, IContact> = (
-        query: string,
-        contentToSearch: IContactRaw[],
-        handleResult: (result: IContactRaw) => IContact = ContactFactory.create
-    ) =>
-        contentToSearch.reduce<IContact[]>(
-            (results, currentContent) =>
-                this._queryMatcher.match(query, currentContent)
-                    ? [...results, handleResult(currentContent)]
-                    : results,
-            []
-        );
-}
-
-const contactQueryMatcherMap = QueryMatcherMapFactory.create<IContactRaw>(
-    Object.keys(new Contact()) as (keyof IContactRaw)[],
-    matcherPlugins
+const matcher = new QueryMatcher(
+    QueryMatcherMapFactory.create(
+        fieldsToSearch,
+        matcherPlugins,
+        defaultMatcher
+    )
 );
 
-export default new ContactSearchEngine(
-    new QueryMatcher<IContactRaw>(contactQueryMatcherMap)
-);
+export default new Engine(matcher, ContactFactory.create);

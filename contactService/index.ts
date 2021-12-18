@@ -15,25 +15,23 @@ import {
     RegisterEventHandlerT,
 } from './eventManager/types';
 import contactSearchEngine from './searchEngine';
-import { EngineSearchT } from './searchEngine/types';
+import { ISearchEngine } from './searchEngine/types';
 
 export default class implements IContactSearchService {
     private _contactCache: ICacheService<IContactRaw>;
     private _subscriptions: EventUnsubscriberT[];
-    private _engineSearch: EngineSearchT<IContactRaw, IContact>;
+    private _searchEngine: ISearchEngine<IContactRaw, IContact>;
 
     constructor(
         updates: IContactUpdateEmitter,
         service: IContactAccessService,
         cache: ICacheService<IContactRaw> = new ContactCacheService(),
         registerEventHandlers: RegisterEventHandlerT = EventManager.registerHandlers,
-        engineSearch: EngineSearchT<
-            IContactRaw,
-            IContact
-        > = contactSearchEngine.search
+        searchEngine: ISearchEngine<IContactRaw, IContact> = contactSearchEngine
     ) {
         this._contactCache = cache;
-        this._engineSearch = engineSearch;
+        this._searchEngine = searchEngine;
+
         this._subscriptions = registerEventHandlers(
             updates.on.bind(updates),
             service.getById,
@@ -44,7 +42,7 @@ export default class implements IContactSearchService {
     }
 
     search = (query: string): IContact[] =>
-        this._engineSearch(query, this._contactCache.getAll());
+        this._searchEngine.search(query, this._contactCache.getAll());
 
     removeListeners = () => this._subscriptions.forEach((unsub) => unsub());
 }
