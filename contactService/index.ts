@@ -12,7 +12,7 @@ import EventManager from './eventManager';
 import {
     EventUnsubscriberT,
     IContactUpdateEmitter,
-    RegisterEventHandlerT,
+    IEventManager,
 } from './eventManager/types';
 import contactSearchEngine from './searchEngine';
 import { ISearchEngine } from './searchEngine/types';
@@ -26,13 +26,13 @@ export default class implements IContactSearchService {
         updates: IContactUpdateEmitter,
         service: IContactAccessService,
         cache: ICacheService<IContactRaw> = new ContactCacheService(),
-        registerEventHandlers: RegisterEventHandlerT = EventManager.registerHandlers,
+        eventManager: IEventManager = EventManager,
         searchEngine: ISearchEngine<IContactRaw, IContact> = contactSearchEngine
     ) {
         this._contactCache = cache;
         this._searchEngine = searchEngine;
 
-        this._subscriptions = registerEventHandlers(
+        this._subscriptions = eventManager.registerHandlers(
             updates.on.bind(updates),
             service.getById,
             this._contactCache.add,

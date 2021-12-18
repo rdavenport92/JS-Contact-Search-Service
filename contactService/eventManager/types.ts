@@ -52,6 +52,10 @@ export interface IContactUpdateEmitter {
     on: ContactEventHandlerT;
 }
 
+export interface IEventManager {
+    registerHandlers: RegisterEventHandlerT;
+}
+
 export type RegisterEventHandlerT = (
     onUpdates: ContactEventHandlerT,
     getContactById: (id: string) => Promise<IContactRaw>,

@@ -30,7 +30,7 @@ describe('Contact Service', () => {
                 { on: () => null } as unknown as IContactUpdateEmitter,
                 {} as IContactAccessService,
                 {} as ICacheService<IContactRaw>,
-                mockEventRegister
+                { registerHandlers: mockEventRegister }
             );
 
             contactService.removeListeners();
