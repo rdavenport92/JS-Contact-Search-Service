@@ -5,6 +5,7 @@ import {
     ContactEventHandlerT,
     ContactUpdateEventType,
     EventUnsubscriberT,
+    IEventManager,
     RemoveContactEventHandlerT,
 } from './types';
 
@@ -27,8 +28,8 @@ const removeContactUpdatesHandler = (
     removeFromCache: (id: string) => number
 ) => onUpdates(ContactUpdateEventType.REMOVE, removeFromCache);
 
-export default class {
-    static registerHandlers = (
+export default <IEventManager>{
+    registerHandlers: (
         onUpdates: ContactEventHandlerT,
         getContactById: (id: string) => Promise<IContactRaw>,
         addToCache: (id: string, contact: IContactRaw) => IContactRaw,
@@ -38,5 +39,5 @@ export default class {
         addContactUpdatesHandler(onUpdates, getContactById, addToCache),
         changeContactUpdatesHandler(onUpdates, updateCache),
         removeContactUpdatesHandler(onUpdates, removeFromCache),
-    ];
-}
+    ],
+};
