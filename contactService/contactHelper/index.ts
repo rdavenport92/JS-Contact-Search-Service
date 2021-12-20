@@ -50,14 +50,13 @@ export const formatPhoneNumber = (potentialPhoneNumber: string) => {
     return applyPhoneNumberFormatToUsableDigits(usableDigits, spliceRanges);
 };
 
-export const formatPhoneNumbers = (phoneNumbers: string[]) =>
-    phoneNumbers.reduce<string[]>(
-        (phoneNumbers, currentPhoneNumber) =>
-            currentPhoneNumber
-                ? [...phoneNumbers, formatPhoneNumber(currentPhoneNumber)]
-                : phoneNumbers,
-        []
-    );
+export const formatPhoneNumbers = (phoneNumbers: (string | undefined)[]) =>
+    phoneNumbers.reduce<string[]>((phoneNumbers, currentPhoneNumber) => {
+        if (!currentPhoneNumber) return phoneNumbers;
+
+        const result = formatPhoneNumber(currentPhoneNumber);
+        return result ? [...phoneNumbers, result] : phoneNumbers;
+    }, []);
 
 export class ContactFactory {
     static create = ({

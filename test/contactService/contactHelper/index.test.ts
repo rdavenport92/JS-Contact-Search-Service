@@ -1,5 +1,8 @@
 import { expect } from 'chai';
-import { formatPhoneNumber } from '../../../contactService/contactHelper';
+import {
+    formatPhoneNumber,
+    formatPhoneNumbers,
+} from '../../../contactService/contactHelper';
 
 describe('Contact Helper', () => {
     describe('formatPhoneNumber', () => {
@@ -77,6 +80,36 @@ describe('Contact Helper', () => {
 
                 expect(result).to.be.null;
             });
+        });
+    });
+
+    describe('formatPhoneNumbers', () => {
+        it('should return list of formatted valid phone numbers', () => {
+            const invalidMoreThan11 = '837483748376';
+            const invalidLessThan10 = '63546';
+            const validWithDashes = '746-837-8374';
+            const validWithCountryCode = '+18884564567';
+            const validWithRandomChars = '+1(888)hfg123-df12h34';
+            const invalidWithRandomChars = '+188sdfasdf8l32l';
+            let invalidUndefined: string;
+
+            const testPhoneNumbers = [
+                invalidMoreThan11,
+                invalidLessThan10,
+                validWithDashes,
+                validWithCountryCode,
+                validWithRandomChars,
+                invalidWithRandomChars,
+                invalidUndefined,
+            ];
+
+            const result = formatPhoneNumbers(testPhoneNumbers);
+
+            expect(result).to.deep.eq([
+                '(746) 837-8374',
+                '(888) 456-4567',
+                '(888) 123-1234',
+            ]);
         });
     });
 });
