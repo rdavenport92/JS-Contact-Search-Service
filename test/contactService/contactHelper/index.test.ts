@@ -1,8 +1,14 @@
 import { expect } from 'chai';
+import Chance from 'chance';
 import {
+    ContactFactory,
     formatPhoneNumber,
     formatPhoneNumbers,
 } from '../../../contactService/contactHelper';
+import { IContactRaw } from '../../../contactService/contactHelper/types';
+import uuid from '../../../utilities/uuid';
+
+const chance = new Chance();
 
 describe('Contact Helper', () => {
     describe('formatPhoneNumber', () => {
@@ -110,6 +116,31 @@ describe('Contact Helper', () => {
                 '(888) 456-4567',
                 '(888) 123-1234',
             ]);
+        });
+    });
+
+    describe('ContactFactory', () => {
+        describe('create', () => {
+            it('should return a Contact object', () => {
+                const rawContact: IContactRaw = {
+                    id: uuid(),
+                    primaryPhoneNumber: '9851234567',
+                    firstName: chance.word(),
+                    lastName: chance.word(),
+                    primaryEmail: chance.word(),
+                } as IContactRaw;
+                const expectedResult = {
+                    id: rawContact.id,
+                    name: `${rawContact.firstName} ${rawContact.lastName}`,
+                    email: rawContact.primaryEmail,
+                    phones: ['(985) 123-4567'],
+                    address: undefined,
+                };
+
+                const result = ContactFactory.create(rawContact);
+
+                expect(result).to.deep.eq(expectedResult);
+            });
         });
     });
 });
