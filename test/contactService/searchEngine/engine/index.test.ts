@@ -51,9 +51,13 @@ describe('Engine', () => {
                 fieldsToCheck: [TEST_PROP],
             });
 
-            const result = searchEngine.search(testQuery, contentToSearch);
+            const result = searchEngine
+                .search(testQuery, contentToSearch)
+                .find(
+                    (match) => match.testProp === contentToSearch[i].testProp
+                );
 
-            expect(result[0].testProp).to.equal(contentToSearch[i].testProp);
+            expect(result.testProp).to.equal(contentToSearch[i].testProp);
         });
 
         it('should return empty array if no matches found', () => {
